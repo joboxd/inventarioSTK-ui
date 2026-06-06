@@ -1,0 +1,79 @@
+<div class="container">
+
+  <div class="mat-elevation-z8">
+    <mat-form-field>
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Laptop" #input>
+    </mat-form-field>
+    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)"
+      class="mat-elevation-z8">
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by id">
+          id
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="numeroSerie">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by numeroSerie">
+          numeroSerie
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.numeroSerie}} </td>
+      </ng-container>
+
+      <!-- Weight Column -->
+      <ng-container matColumnDef="marcaModelo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by marcaModelo">
+          marcaModelo
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.marcaModelo}} </td>
+      </ng-container>
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by estado">
+          estado
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.estado}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="costoAdquisicion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by costoAdquisicion">
+          costoAdquisicion
+        </th>
+        <td mat-cell *matCellDef="let element"> {{ this.formatPrice(element.costoAdquisicion) }} </td>
+      </ng-container>
+      <ng-container matColumnDef="fechaIngreso">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by fechaIngreso">
+          fechaIngreso
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.fechaIngreso}} </td>
+      </ng-container>
+      <ng-container matColumnDef="categoria">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by categoria">
+          categoria
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.categoria}} </td>
+      </ng-container>
+      <ng-container matColumnDef="folioInventario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by folioInventario">
+          folioInventario
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.folioInventario}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr>
+    </table>
+
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of inventario">
+    </mat-paginator>
+  </div>
+</div>
