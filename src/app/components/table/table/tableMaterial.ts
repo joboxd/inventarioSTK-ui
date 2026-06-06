@@ -8,6 +8,7 @@ import { Activo, ContentActivos } from '../../../models/Activo';
 import { KeycloackService } from "../../../service/keycloak/keycloak"
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { NgStyle, NgClass } from '@angular/common';
 
 /**
  * @title Table with pagination
@@ -16,7 +17,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
   selector: 'tableMaterial',
   styleUrl: 'tableMaterial.css',
   templateUrl: 'tableMaterial.html',
-  imports: [MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule, MatFormFieldModule],
+  imports: [MatTableModule, MatPaginatorModule, 
+    MatSortModule, MatInputModule, MatFormFieldModule, NgStyle, NgClass],
 })
 export class TablePaginationExample implements AfterViewInit, OnInit {
   ngOnInit() {
@@ -73,6 +75,9 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
       currency: 'MXN'
     }).format(amount);
   }
-
+  getRow(activo: Activo){
+    console.log(activo);
+    
+  }
 }
 

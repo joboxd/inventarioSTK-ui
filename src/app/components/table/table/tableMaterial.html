@@ -9,11 +9,11 @@
       class="mat-elevation-z8">
 
       <!-- Position Column -->
-      <ng-container matColumnDef="id">
+      <ng-container matColumnDef="id" >
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by id">
           id
         </th>
-        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+        <td mat-cell *matCellDef="let element" > {{element.id}} </td>
       </ng-container>
 
       <!-- Name Column -->
@@ -65,8 +65,8 @@
         <td mat-cell *matCellDef="let element"> {{element.folioInventario}} </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngStyle] = "{'background-color':   row.estado === 'DISPONIBLE' ? '#C3D12C' : row.estado === 'ASIGNADO' ? '#6B85D1' : row.estado === 'EN_MANTENIMIENTO' ? '#D1AC2B' : '#D15836'}" (click)="getRow(row)"></tr>
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
       </tr>

@@ -5,3 +5,9 @@ table {
   font-size: 14px;
   width: 100%;
 }
+/* Esto hará que los títulos se vean grandes y en negrita sin romper la tabla */
+.mat-mdc-header-cell {
+  font-size: 1.25rem; /* El tamaño equivalente a un h2 o el que tú quieras */
+  font-weight: bold;
+  color: #000000;
+}
