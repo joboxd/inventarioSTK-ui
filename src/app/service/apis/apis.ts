@@ -3,6 +3,7 @@ import { ApiCrudService } from "../../service/helper/ApiCrud-service";
 import { Observable } from 'rxjs';
 import { ContentActivos } from "../../models/Activo"
 import { environment } from "../../../environments/environment"
+import { Filtros } from '../../models/Filtros';
 @Injectable({
   providedIn: 'root',
 })
@@ -11,5 +12,8 @@ export class Apis {
 
   public getAllActivos(): Observable<ContentActivos> {
     return this.api.get(`${environment.apiInventario.host}/api/activos/all`) as Observable<ContentActivos>
+  }
+  public getActivosFiltered(body: Filtros): Observable<ContentActivos> {
+    return this.api.get(`${environment.apiInventario.host}/api/activos/filtros`, [{...body}]) as Observable<ContentActivos>
   }
 }
