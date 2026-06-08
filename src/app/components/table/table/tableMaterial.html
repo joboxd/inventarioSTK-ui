@@ -1,41 +1,143 @@
 <div class="container">
-  <div class="filtros-form-fields">
-    <mat-form-field>
-      <mat-label>Numero de Serie</mat-label>
-      <input matInput (keyup) = "getInputFilter($event)">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Marca o Modelo</mat-label>
-      <input matInput (keyup) = "getInputFilter($event)">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Categoria</mat-label>
-      <input matInput (keyup) = "getInputFilter($event)">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Costo minimo</mat-label>
-      <input matInput matInput type="number" min="0" (keypress)="onlyNumers($event)" (keyup) = "getInputFilter($event)">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Consto maximo</mat-label>
-      <input matInput matInput type="number" min="0" (keypress)="onlyNumers($event)" (keyup) = "getInputFilter($event)">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Estado</mat-label>
-      <mat-select (selectionChange)="getInputFilterSelector($event)">
-        <mat-option value="DISPONIBLE" >DISPONIBLE</mat-option>
-        <mat-option value="ASIGNADO" >ASIGNADO</mat-option>
-        <mat-option value="EN_MANTENIMIENTO">EN_MANTENIMIENTO</mat-option>
-        <mat-option value="BAJA">BAJA</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button class="btn-primary" (click) = "getActivosByFilters()"> Consultar</button>
-  </div>
+  <mat-tab-group (selectedIndexChange)="setCurrentTab($event)">
+    <mat-tab label="Buscar en tabla actual"> <mat-form-field>
+        <mat-label>Buscar en tabla actual</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Laptop" #input>
+      </mat-form-field> </mat-tab>
+    <mat-tab label="Busqueda profunda">
+      <div class="filtros-form-fields">
+        <mat-form-field>
+          <mat-label>Numero de Serie</mat-label>
+          <input matInput (keyup)="getInputFilter($event)">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Marca o Modelo</mat-label>
+          <input matInput (keyup)="getInputFilter($event)">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Categoria</mat-label>
+          <mat-select (selectionChange)="getInputFilterSelector($event)">
+            @for (cat of categorias; track cat.id) {
+
+            <mat-option [value]="cat.nombre">
+              {{ cat.nombre }}
+            </mat-option>
+
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Costo minimo</mat-label>
+          <input matInput matInput type="number" min="0" (keypress)="onlyNumers($event)"
+            (keyup)="getInputFilter($event)">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Costo maximo</mat-label>
+          <input matInput matInput type="number" min="0" (keypress)="onlyNumers($event)"
+            (keyup)="getInputFilter($event)">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Estado</mat-label>
+          <mat-select (selectionChange)="getInputFilterSelector($event)">
+            <mat-option value="DISPONIBLE">DISPONIBLE</mat-option>
+            <mat-option value="ASIGNADO">ASIGNADO</mat-option>
+            <mat-option value="EN_MANTENIMIENTO">EN_MANTENIMIENTO</mat-option>
+            <mat-option value="BAJA">BAJA</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <section>
+          <div class="example-button-row">
+            <button matButton="elevated" [disabled]="showProgressBusquda()" (click)="getActivosByFilters()">
+              @if(showProgressBusquda()) {
+              <mat-spinner diameter="24" class="spinner-button"></mat-spinner>
+              Cargando...
+              }
+              @else {
+              Buscar
+              }
+            </button>
+          </div>
+          <div class="example-button-row">
+            <button matButton="elevated" [disabled]="showProgressReporte()" (click)="getReporte()">
+              @if(showProgressReporte()) {
+              <mat-spinner diameter="24" class="spinner-button"></mat-spinner>
+              Cargando...
+              }
+              @else {
+              Exportar
+              }
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </mat-tab>
+    @if(currentRole == "admin"){
+    <mat-tab label="Alta de activos">
+      <h2>Alta de activos</h2>
+      <div>
+        <mat-form-field>
+          <mat-label>Numero de Serie</mat-label>
+          <input matInput [value]="activoToSave.numeroSerie || ''" (keyup)="getInputToSave($event)">
+        </mat-form-field>
+        @if(activoToSave.numeroSerie.length > 4){
+        <button matButton="elevated" (click)="getActivoByNumSerie()">
+          Buscar
+        </button>
+        }
+      </div>
+
+      <mat-form-field>
+        <mat-label>Marca o Modelo</mat-label>
+        <input matInput [value]="activoToSave.marcaModelo || ''" (keyup)="getInputToSave($event)">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Categoria</mat-label>
+        <mat-select [value]="activoToSave.categoriaId || null"
+          (selectionChange)="getInputToSaveSelectorCategoria($event)">
+          @for (cat of categorias; track cat.id) {
+
+          <mat-option [value]="cat.id">
+            {{ cat.nombre }}
+          </mat-option>
+
+          }
+        </mat-select>
+      </mat-form-field>
+      @if(activoFoundByNumSerie){
+      <mat-form-field>
+        <mat-label>Estado</mat-label>
+        <mat-select [value]="activoToSave.estado || null" (selectionChange)="getInputToSaveSelector($event)">
+          <mat-option value="DISPONIBLE">DISPONIBLE</mat-option>
+          <mat-option value="ASIGNADO">ASIGNADO</mat-option>
+          <mat-option value="EN_MANTENIMIENTO">EN_MANTENIMIENTO</mat-option>
+          <mat-option value="BAJA">BAJA</mat-option>
+        </mat-select>
+      </mat-form-field>
+      }
+      <mat-form-field>
+        <mat-label>Costo</mat-label>
+        <input matInput matInput type="number" min="0" [value]="activoToSave.costoAdquisicion || ''"
+          (keypress)="onlyNumers($event)" (keyup)="getInputToSave($event)">
+      </mat-form-field>
+      <div class="example-button-row">
+
+        <button matButton="elevated" (click)="saveActivo()" [disabled]="!activoCompleted()">
+          Guardar
+        </button>
+        <button matButton="elevated" (click)="clearActivoToSave()" [disabled]="!cancelInputs()">
+          Cancelar
+        </button>
+
+      </div>
+    </mat-tab>
+    }
+
+  </mat-tab-group>
+  @if(currentTab != 2){
   <div class="mat-elevation-z8">
-    <mat-form-field>
-      <mat-label>Filter</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Laptop" #input>
-    </mat-form-field>
+
+
     <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)"
       class="mat-elevation-z8">
 
@@ -109,4 +211,7 @@
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of inventario">
     </mat-paginator>
   </div>
+  }
+
+
 </div>

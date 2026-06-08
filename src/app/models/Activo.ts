@@ -5,8 +5,9 @@ export interface Activo {
     marcaModelo: string,
     estado: string,
     costoAdquisicion: number,
-    fechaIngreso: Date,
-    categoria: string
+    fechaIngreso?: Date,
+    categoria: string,
+    categoriaId:number
 }
 export interface Categoria {
     id: number,

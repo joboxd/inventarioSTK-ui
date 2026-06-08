@@ -5,9 +5,8 @@ table {
   font-size: 14px;
   width: 100%;
 }
-/* Esto hará que los títulos se vean grandes y en negrita sin romper la tabla */
 .mat-mdc-header-cell {
-  font-size: 1.25rem; /* El tamaño equivalente a un h2 o el que tú quieras */
+  font-size: 1.25rem; 
   font-weight: bold;
   color: #000000;
 }
@@ -15,4 +14,28 @@ table {
   display: flex;
   align-items: flex-start;
 
+}
+section {
+  display: flex;
+  align-items: center;
+}
+
+.example-label {
+  font-size: 14px;
+  margin: 0 16px 0 8px;
+  min-width: 120px;
+}
+
+.example-button-row {
+  max-width: 600px;
+}
+
+.example-button-row .mat-mdc-button-base {
+  margin: 8px 8px 8px 0;
+}
+
+.example-flex-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
