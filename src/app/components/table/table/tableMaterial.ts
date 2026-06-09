@@ -16,7 +16,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { ReporteResponse } from '../../../models/ReporteResponse';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-
+import Swal from 'sweetalert2'
 
 /**
  * @title Table with pagination
@@ -35,9 +35,8 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
     this.getAllActivos();
     this.getCategorias();
     console.log(this.currentRole);
-    
-  }
 
+  }
   private _liveAnnouncer = inject(LiveAnnouncer);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(Apis);
@@ -223,25 +222,17 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
     })
   }
   downLoadReporte(base64Data: string, nombreArchivo: string) {
-    // 1. Decodificar la cadena Base64 a texto binario
     const byteCharacters = atob(base64Data);
 
-    // 2. Crear un arreglo de bytes del tamaño exacto
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
-
-    // 3. Convertirlo a un arreglo tipado (Uint8Array)
     const byteArray = new Uint8Array(byteNumbers);
 
-    // 4. Crear el Blob indicando que es un archivo ZIP
     const blob = new Blob([byteArray], { type: 'application/zip' });
-
-    // 5. Crear una URL temporal en el navegador para este Blob
     const url = window.URL.createObjectURL(blob);
 
-    // 6. Crear un elemento <a> (enlace) invisible y simular un clic
     const downloadLink = document.createElement('a');
     downloadLink.href = url;
     downloadLink.download = nombreArchivo || 'reporte_inventario.zip';
@@ -249,7 +240,6 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
     document.body.appendChild(downloadLink);
     downloadLink.click();
 
-    // 7. Limpiar el DOM y la memoria
     document.body.removeChild(downloadLink);
     window.URL.revokeObjectURL(url);
   }
@@ -273,43 +263,44 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
   }
   saveActivo() {
     console.log(this.activoToSave);
-    if(this.activoFoundByNumSerie){
-       console.log(this.activoFoundByNumSerie);
+    if (this.activoFoundByNumSerie) {
+
       this.api.updateActivo(this.activoToSave).subscribe({
-      next: (data: string) => {
-        if (this.dataSource.paginator) {
-          this.dataSource.paginator.firstPage();
+        next: (data: string) => {
+          if (this.dataSource.paginator) {
+            this.dataSource.paginator.firstPage();
+          }
+          Swal.fire("Activo actualizado exitosamente", "", "success");
+          this.activoFoundByNumSerie = false;
+          this.clearActivoToSave();
+          this.getAllActivos()
+
+        },
+        error: (err) => {
+          const mensajeBackend = err.error?.message || 'Ocurrió un error inesperado al guardar el activo.';
+          Swal.fire("Error al actualizar", mensajeBackend, "error");
+
         }
-       
-        
-        this.activoFoundByNumSerie = false;
-        this.clearActivoToSave();
-        this.getAllActivos()
-
-      },
-      error: (err) => {
-        console.log(err);
-
-      }
-    })
+      })
     }
-    else{
+    else {
       this.api.saveActivo(this.activoToSave).subscribe({
-      next: (data: string) => {
-        if (this.dataSource.paginator) {
-          this.dataSource.paginator.firstPage();
+        next: (data: string) => {
+          if (this.dataSource.paginator) {
+            this.dataSource.paginator.firstPage();
+          }
+          Swal.fire("Activo guardado exitosamente", "", "success");
+          this.getAllActivos()
+
+        },
+        error: (err) => {
+          const mensajeBackend = err.error?.message || 'Ocurrió un error inesperado al guardar el activo.';
+          Swal.fire("Error al guardar", mensajeBackend, "error");
+
         }
-
-        this.getAllActivos()
-
-      },
-      error: (err) => {
-        console.log(err);
-
-      }
-    })
+      })
     }
-    
+
 
   }
   activoCompleted(): boolean {
@@ -349,20 +340,21 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
   getActivoByNumSerie() {
     this.api.getActivoByNumeroSerie(this.activoToSave.numeroSerie).subscribe({
       next: (data: Activo) => {
-        //mensaje de exito
-        //Se cargan datos del activo
         if (this.dataSource.paginator) {
           this.dataSource.paginator.firstPage();
         }
+        if (!data) {
 
-        this.activoToSave = data
-        this.activoFoundByNumSerie = true
-        this.cdr.detectChanges();
-
-
+        } else {
+          this.activoToSave = data
+          this.activoFoundByNumSerie = true
+          this.cdr.detectChanges();
+        }
       },
       error: (err) => {
-        console.log(err);
+        const mensajeBackend = err.error?.message || 'Ocurrió un error inesperado al buscar el activo.';
+
+        Swal.fire("No se encontró activo", mensajeBackend, "warning");
 
       }
     })
