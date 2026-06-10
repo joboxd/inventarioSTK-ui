@@ -1,4 +1,19 @@
 <div class="container">
+  <mat-toolbar color="primary" class="header-toolbar">
+    <span>Sistema de Inventario</span>
+
+    <span class="spacer" style="flex: 1 1 auto;"></span>
+
+    <button mat-button (click)="logOut()">
+      <mat-icon>logout</mat-icon>
+      Cerrar Sesión
+    </button>
+  </mat-toolbar>
+</div>
+
+
+
+<div class="container">
   <mat-tab-group (selectedIndexChange)="setCurrentTab($event)">
     <mat-tab label="Buscar en tabla actual"> <mat-form-field>
         <mat-label>Buscar en tabla actual</mat-label>
@@ -12,11 +27,12 @@
         </mat-form-field>
         <mat-form-field>
           <mat-label>Marca o Modelo</mat-label>
-          <input matInput (keyup)="getInputFilter($event)">
+          <input matInput  (keyup)="getInputFilter($event)">
         </mat-form-field>
         <mat-form-field>
           <mat-label>Categoria</mat-label>
-          <mat-select (selectionChange)="getInputFilterSelector($event)">
+          <mat-select  (selectionChange)="getInputFilterSelectorCategoria($event)">
+            <mat-option [value]="null"></mat-option>
             @for (cat of categorias; track cat.id) {
 
             <mat-option [value]="cat.nombre">
@@ -28,17 +44,18 @@
         </mat-form-field>
         <mat-form-field>
           <mat-label>Costo minimo</mat-label>
-          <input matInput matInput type="number" min="0" (keypress)="onlyNumers($event)"
-            (keyup)="getInputFilter($event)">
+          <input matInput matInput  type="number" min="0"
+            (keypress)="onlyNumers($event)" (keyup)="getInputFilter($event)">
         </mat-form-field>
         <mat-form-field>
           <mat-label>Costo maximo</mat-label>
-          <input matInput matInput type="number" min="0" (keypress)="onlyNumers($event)"
-            (keyup)="getInputFilter($event)">
+          <input matInput matInput  type="number" min="0"
+            (keypress)="onlyNumers($event)" (keyup)="getInputFilter($event)">
         </mat-form-field>
         <mat-form-field>
           <mat-label>Estado</mat-label>
-          <mat-select (selectionChange)="getInputFilterSelector($event)">
+          <mat-select  (selectionChange)="getInputFilterSelectorEstado($event)">
+            <mat-option [value]="null"></mat-option>
             <mat-option value="DISPONIBLE">DISPONIBLE</mat-option>
             <mat-option value="ASIGNADO">ASIGNADO</mat-option>
             <mat-option value="EN_MANTENIMIENTO">EN_MANTENIMIENTO</mat-option>
@@ -67,6 +84,7 @@
               Exportar
               }
             </button>
+
           </div>
         </section>
 
@@ -78,7 +96,7 @@
       <div>
         <mat-form-field>
           <mat-label>Numero de Serie</mat-label>
-          <input matInput [value]="activoToSave.numeroSerie || ''" (keyup)="getInputToSave($event)">
+          <input matInput (keyup)="getInputToSave($event)">
         </mat-form-field>
         @if(activoToSave.numeroSerie.length > 4){
         <button matButton="elevated" (click)="getActivoByNumSerie()">
@@ -89,7 +107,7 @@
 
       <mat-form-field>
         <mat-label>Marca o Modelo</mat-label>
-        <input matInput [value]="activoToSave.marcaModelo || ''" (keyup)="getInputToSave($event)">
+        <input matInput  (keyup)="getInputToSave($event)">
       </mat-form-field>
       <mat-form-field>
         <mat-label>Categoria</mat-label>
@@ -107,7 +125,7 @@
       @if(activoFoundByNumSerie){
       <mat-form-field>
         <mat-label>Estado</mat-label>
-        <mat-select [value]="activoToSave.estado || null" (selectionChange)="getInputToSaveSelector($event)">
+        <mat-select (selectionChange)="getInputToSaveSelector($event)">
           <mat-option value="DISPONIBLE">DISPONIBLE</mat-option>
           <mat-option value="ASIGNADO">ASIGNADO</mat-option>
           <mat-option value="EN_MANTENIMIENTO">EN_MANTENIMIENTO</mat-option>
@@ -132,7 +150,6 @@
       </div>
     </mat-tab>
     }
-
   </mat-tab-group>
   @if(currentTab != 2){
   <div class="mat-elevation-z8">
@@ -141,59 +158,55 @@
     <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)"
       class="mat-elevation-z8">
 
-      <!-- Position Column -->
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by id">
-          id
+          ID
         </th>
         <td mat-cell *matCellDef="let element"> {{element.id}} </td>
       </ng-container>
 
-      <!-- Name Column -->
       <ng-container matColumnDef="numeroSerie">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by numeroSerie">
-          numeroSerie
+          Numero de Serie
         </th>
         <td mat-cell *matCellDef="let element"> {{element.numeroSerie}} </td>
       </ng-container>
 
-      <!-- Weight Column -->
       <ng-container matColumnDef="marcaModelo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by marcaModelo">
-          marcaModelo
+          Marca/Modelo
         </th>
         <td mat-cell *matCellDef="let element"> {{element.marcaModelo}} </td>
       </ng-container>
 
-      <!-- Symbol Column -->
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by estado">
-          estado
+          Estado
         </th>
         <td mat-cell *matCellDef="let element"> {{element.estado}} </td>
       </ng-container>
 
       <ng-container matColumnDef="costoAdquisicion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by costoAdquisicion">
-          costoAdquisicion
+          Costo de Adquisicion
         </th>
         <td mat-cell *matCellDef="let element"> {{ this.formatPrice(element.costoAdquisicion) }} </td>
       </ng-container>
       <ng-container matColumnDef="fechaIngreso">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by fechaIngreso">
-          fechaIngreso
+          Fecha de Ingreso
         </th>
         <td mat-cell *matCellDef="let element"> {{element.fechaIngreso}} </td>
       </ng-container>
       <ng-container matColumnDef="categoria">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by categoria">
-          categoria
+          Categoria
         </th>
         <td mat-cell *matCellDef="let element"> {{element.categoria}} </td>
       </ng-container>
       <ng-container matColumnDef="folioInventario">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by folioInventario">
-          folioInventario
+          Folio
         </th>
         <td mat-cell *matCellDef="let element"> {{element.folioInventario}} </td>
       </ng-container>

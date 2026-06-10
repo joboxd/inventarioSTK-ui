@@ -1,13 +1,13 @@
 export const environment = {
  production: false,
   keycloack: {
-    url: 'http://localhost:8081',
+    url: 'https://authentication-api-374227089883.us-central1.run.app',
     realm: 'inventario',
     clientId: 'inventario-ui',
-    logoutRedirectUri: "http://localhost:4200"
+    logoutRedirectUri: "https://stk-ui.web.app/"
   },
   apiInventario:{
-    host: "http://localhost:8080"
+    host: "https://inventario-stk-374227089883.europe-west1.run.app"
   }
   
 };

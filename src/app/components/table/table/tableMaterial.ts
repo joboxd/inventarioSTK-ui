@@ -16,6 +16,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { ReporteResponse } from '../../../models/ReporteResponse';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import Swal from 'sweetalert2'
 
 /**
@@ -28,7 +29,7 @@ import Swal from 'sweetalert2'
   imports: [MatTableModule, MatPaginatorModule,
     MatSortModule, MatInputModule, MatFormFieldModule,
     NgStyle, NgClass, MatSelectModule, MatButtonModule,
-    MatTabsModule, MatIconModule, MatProgressSpinner],
+    MatTabsModule, MatIconModule, MatProgressSpinner, MatToolbarModule],
 })
 export class TablePaginationExample implements AfterViewInit, OnInit {
   ngOnInit() {
@@ -41,7 +42,8 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(Apis);
   currentRole = inject(KeycloackService).getRoles()[0];
-  private filtros: Filtros = {}
+  keycloak = inject(KeycloackService);
+  filtros: Filtros = {}
   activoFoundByNumSerie: boolean = false;
   categorias: Categoria[] = [];
   activoToSave: Activo = {
@@ -123,10 +125,13 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
 
 
   }
-  getInputFilterSelector(event: MatSelectChange) {
+  getInputFilterSelectorEstado(event: MatSelectChange) {
     const value = event.value;
     this.filtros.estado = value;
-
+  }
+  getInputFilterSelectorCategoria(event: MatSelectChange) {
+    const value = event.value;
+    this.filtros.categoria = value;
   }
   getInputToSave(event: Event) {
 
@@ -205,6 +210,8 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
         this.showProgressBusquda.update(show => !show);
       }
     })
+
+
   }
   getReporte() {
     this.showProgressReporte.update(show => !show);
@@ -290,6 +297,7 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
             this.dataSource.paginator.firstPage();
           }
           Swal.fire("Activo guardado exitosamente", "", "success");
+          this.clearActivoToSave();
           this.getAllActivos()
 
         },
@@ -358,6 +366,9 @@ export class TablePaginationExample implements AfterViewInit, OnInit {
 
       }
     })
+  }
+  logOut() {
+    this.keycloak.logout()
   }
 }
 
